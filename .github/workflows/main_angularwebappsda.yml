@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -26,15 +26,12 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
-
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
-
+      
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: release.zip
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
@@ -50,20 +47,17 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: node-app
-
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
       
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_8BB04D8522E04E33B2BC42FA5E7DCED6 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_22F0495F383A4EE3B0C8CF28E9D32BD1 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_076D47F8E6184AFE805F8213CAF8A054 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_7A8088DBC3F94366B70B4E94D9880E6C }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E8139646EEC1416B81E39572525A5C3C }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6488F2F39DD7405BA122F01A77BD970A }}
 
       - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
+        id: deploy-to-webapp
         with:
           app-name: 'angularwebappsda'
           slot-name: 'Production'
